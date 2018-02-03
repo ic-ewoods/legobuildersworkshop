@@ -1,0 +1,16 @@
+{
+  "name": "lbw/lbw-donation",
+  "description": "A Drupal 8 module for accepting a donation",
+  "type": "drupal-module",
+  "authors": [
+    {
+      "name": "Eric Woods (woodseowl)",
+      "homepage": "https://www.drupal.org/u/woodseowl",
+      "role": "Maintainer"
+    }
+  ],
+  "license": "proprietary",
+  "minimum-stability": "dev",
+  "require": {
+  }
+}

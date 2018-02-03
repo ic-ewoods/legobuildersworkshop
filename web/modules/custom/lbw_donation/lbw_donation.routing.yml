@@ -1,0 +1,7 @@
+lbw_donation.content:
+  path: '/lbw_donate/test'
+  defaults:
+    _controller: '\Drupal\lbw_donation\Controller\TestController::content'
+    _title: 'Donation Test'
+  requirements:
+    _permission: 'access content'

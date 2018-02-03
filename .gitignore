@@ -5,7 +5,6 @@
 # Ignore Drupal's file directory
 web/sites/default/files
 
-# Pantheon commits a settings.php for environment-specific settings.
 # Place local settings in settings.local.php
 web/sites/*/settings.local.php
 web/sites/*/services*.yml
@@ -73,3 +72,5 @@ web/autoload.php
 vendor/
 
 config/sync
+.phplint-cache
+drush/contrib

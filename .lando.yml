@@ -13,3 +13,26 @@ services:
     build:
       - "mkdir -p ~/.drush/site-aliases"
       - "ln -sf /app/drush/lbw.aliases.drushrc.php ~/.drush/site-aliases/lbw.drushrc.php"
+    overrides:
+      services:
+        environment:
+          BEHAT_PARAMS: >-
+            {"extensions" : {
+              "Behat\\MinkExtension" :
+                {"base_url" : "http://lbw-donate.lndo.site/"},
+              "Drupal\\DrupalExtension" :
+                {"drush" : {"root":  "/app/web" }}
+            }}
+tooling:
+  phplint:
+    service: appserver
+    cmd: /app/vendor/bin/phplint
+  phpcs:
+    service: appserver
+    cmd: /app/vendor/bin/phpcs
+  phpunit:
+    service: appserver
+    cmd: /app/vendor/bin/phpunit
+  behat:
+    service: appserver
+    cmd: /app/vendor/bin/behat

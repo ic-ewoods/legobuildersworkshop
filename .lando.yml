@@ -1,0 +1,15 @@
+name: lbw-donate
+recipe: drupal8
+config:
+  webroot: web
+  drush: composer
+events:
+  post-db-import:
+    - appserver: cd $LANDO_WEBROOT && drush cr -y
+  post-start:
+    - appserver: cd $LANDO_MOUNT && composer install
+services:
+  appserver:
+    build:
+      - "mkdir -p ~/.drush/site-aliases"
+      - "ln -sf /app/drush/lbw.aliases.drushrc.php ~/.drush/site-aliases/lbw.drushrc.php"

@@ -6,8 +6,6 @@ config:
 events:
   post-db-import:
     - appserver: cd $LANDO_WEBROOT && drush cr -y
-  post-start:
-    - appserver: cd $LANDO_MOUNT && composer install
 services:
   appserver:
     build:

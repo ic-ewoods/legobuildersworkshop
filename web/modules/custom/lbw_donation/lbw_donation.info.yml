@@ -1,6 +1,8 @@
 name: LBW Donation Module
 description: Provides a page for collecting donations
 package: Custom
+dependencies:
+  - stripe
 
 type: module
 core: 8.x

@@ -13,3 +13,11 @@ lbw_donation.test_stripe_form:
     _title: 'Donation Form Test'
   requirements:
     _permission: 'access content'
+
+lbw_donation.test_stripe_checkout_form:
+  path: '/lbw_donate/test/stripe_checkout_form'
+  defaults:
+    _form: '\Drupal\lbw_donation\Test\StripeCheckoutForm'
+    _title: 'Donation Form Test'
+  requirements:
+    _permission: 'access content'

@@ -1,7 +1,15 @@
-lbw_donation.content:
-  path: '/lbw_donate/test'
+lbw_donation.test_content:
+  path: '/lbw_donate/test/content'
   defaults:
-    _controller: '\Drupal\lbw_donation\Controller\TestController::content'
-    _title: 'Donation Test'
+    _controller: '\Drupal\lbw_donation\Test\ContentController::content'
+    _title: 'Donation Content Test'
+  requirements:
+    _permission: 'access content'
+
+lbw_donation.test_stripe_form:
+  path: '/lbw_donate/test/stripe_form'
+  defaults:
+    _form: '\Drupal\lbw_donation\Test\StripeForm'
+    _title: 'Donation Form Test'
   requirements:
     _permission: 'access content'

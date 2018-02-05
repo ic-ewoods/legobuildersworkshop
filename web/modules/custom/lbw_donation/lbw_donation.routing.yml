@@ -29,3 +29,11 @@ lbw_donation.test_template_form:
     _title: 'Donation Template Form Test'
   requirements:
     _permission: 'access content'
+
+lbw_donation.donate_form:
+  path: '/donate'
+  defaults:
+    _form: '\Drupal\lbw_donation\Form\DonationForm'
+    _title: 'Donation Form'
+  requirements:
+    _permission: 'access content'

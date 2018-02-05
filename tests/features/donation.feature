@@ -1,9 +1,9 @@
 Feature: Donation Page
 
-  Scenario: Donation Test Page is Reachable
-    Given I am at "/lbw_donate/test/content"
-    Then I should see text matching "Donate Test Complete"
+  Scenario: Donation Page is Reachable
+    Given I am at "/donate"
+    Then I should see text matching "Donation Form"
 
-  Scenario: Donation Test Stripe Form is Reachable
-    Given I am at "/lbw_donate/test/stripe_form"
-    Then I should see 2 "form" elements
+  Scenario: Donation Page Description Template is Displayed
+    Given I am at "/donate"
+    Then I should see text matching "Help support"

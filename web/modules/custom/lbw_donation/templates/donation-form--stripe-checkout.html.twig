@@ -1,9 +1,9 @@
 <script
     src="https://checkout.stripe.com/checkout.js" class="stripe-button"
     data-key="{{ stripe_key }}"
-    data-amount="999"
+    data-amount="{{ donation_amount }}"
     data-name="{{ site_name }}"
-    data-description="Donation"
+    data-description="{{ description }}"
     data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
     data-locale="auto"
     {#data-billing-address="true"#}

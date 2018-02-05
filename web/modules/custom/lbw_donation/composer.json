@@ -12,5 +12,6 @@
   "license": "proprietary",
   "minimum-stability": "dev",
   "require": {
+    "stripe/stripe-php": "4.*"
   }
 }

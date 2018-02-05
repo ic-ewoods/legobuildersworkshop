@@ -4,26 +4,44 @@ namespace Drupal\lbw_donation\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\lbw_donation\Stripe\StripeCharge;
+use Drupal\lbw_donation\Stripe\StripeConfig;
 
 /**
  * Class DonationForm.
  *
  * @package Drupal\lbw_donation\Form
  */
-class DonationForm extends FormBase {
+class DonationForm extends FormBase
+{
+    /** @var StripeConfig */
+    private $stripe_config;
 
+    /** @var StripeCharge */
+    private $stripe_charge;
+
+    public function __construct()
+    {
+        // Note: FormBase does not have a constructor
+
+        // For unit testing these should be injectable
+        $this->stripe_config = new StripeConfig();
+        $this->stripe_charge = new StripeCharge($this->stripe_config);
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function getFormId() {
+    public function getFormId()
+    {
         return 'lbw_donation_form';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state) {
+    public function buildForm(array $form, FormStateInterface $form_state)
+    {
 
         $form['description'] = [
             '#type' => 'inline_template',
@@ -32,13 +50,15 @@ class DonationForm extends FormBase {
 
         $form['donation_amount'] = [
             '#type' => 'number',
-            '#title' => 'Amount',
+            '#title' => $this->t('Amount'),
+            '#default_value' => 10,
+            '#step' => 'any'
         ];
 
         $form['stripe_checkout'] = [
             '#type' => 'inline_template',
             '#template' => $this->getFieldTemplate('stripe-checkout'),
-            '#context' => $this->getSwipeCheckoutContext(),
+            '#context' => $this->getStripeCheckoutContext(),
         ];
 
         $form['stripeToken'] = [
@@ -80,20 +100,30 @@ class DonationForm extends FormBase {
     /**
      * {@inheritdoc}
      */
-    public function validateForm(array &$form, FormStateInterface $form_state) {
+    public function validateForm(array &$form, FormStateInterface $form_state)
+    {
         parent::validateForm($form, $form_state);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function submitForm(array &$form, FormStateInterface $form_state) {
-        // Display result.
-        foreach ($form_state->getValues() as $key => $value) {
-            drupal_set_message($key . ': ' . $value);
+    public function submitForm(array &$form, FormStateInterface $form_state)
+    {
+        // @todo Log this instead of reporting to the front end
+        if ($this->stripe_config->getStripeEnvironment() == 'test') {
+            // Reporting during development workflow
+            foreach ($form_state->getValues() as $key => $value) {
+                drupal_set_message($key . ': ' . $value);
+            }
         }
 
-        $this->processCharge($form_state);
+        if ($this->processCharge($form_state)) {
+            drupal_set_message($this->t('Thank you for your donation of $@amount', ['@amount' => $form_state->getValue('donation_amount')]));
+        } else {
+            $error_msg = $this->getChargeError();
+            drupal_set_message($this->t('There was an error processing your donation. Please contact us. <br> [@error]', ['@error' => $error_msg]), 'error');
+        }
 
     }
 
@@ -110,10 +140,13 @@ class DonationForm extends FormBase {
         return $template;
     }
 
-    private function getSwipeCheckoutContext()
+    /**
+     * @return array
+     */
+    private function getStripeCheckoutContext()
     {
         $variables = [
-            'stripe_key' => $this->getStripeKey('public'),
+            'stripe_key' => $this->stripe_config->getKey('public'),
             'site_name' => \Drupal::config('system.site')->get('name'),
             'description' => 'Donation',
         ];
@@ -122,34 +155,23 @@ class DonationForm extends FormBase {
     }
 
     /**
-     * @param $key
-     * @return array|mixed|null
-     */
-    private function getStripeKey($key)
-    {
-        $stripe_config = \Drupal::config('stripe.settings');
-        $stripe_environment = $stripe_config->get('environment');
-        $stripe_public_key = $stripe_config->get("apikey.{$stripe_environment}.{$key}");
-
-        return $stripe_public_key;
-    }
-
-    /**
      * @param FormStateInterface $form_state
+     * @return bool
      */
     private function processCharge(FormStateInterface $form_state)
     {
-        \Stripe\Stripe::setApiKey($this->getStripeKey('secret'));
-
         $stripe_token = $form_state->getValue('stripeToken');
         $donation_amount = $form_state->getValue('donation_amount') * 100;
 
-        $charge = \Stripe\Charge::create([
-            'amount' => $donation_amount,
-            'currency' => 'usd',
-            'description' => 'Donation',
-            'source' => $stripe_token,
-        ]);
+        return $this->stripe_charge->create($donation_amount, $stripe_token);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getChargeError()
+    {
+        return $this->stripe_charge->getErrorMessage();
     }
 
 }

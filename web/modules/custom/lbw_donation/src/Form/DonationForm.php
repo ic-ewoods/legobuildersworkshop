@@ -110,18 +110,23 @@ class DonationForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        // @todo Log this instead of reporting to the front end
+        // Reporting during development workflow
         if ($this->stripe_config->getStripeEnvironment() == 'test') {
-            // Reporting during development workflow
+            $log_msg = "Donation form test submission.\n";
             foreach ($form_state->getValues() as $key => $value) {
-                drupal_set_message($key . ': ' . $value);
+                $log_msg .= "{$key}: {$value}\n";
             }
+            \Drupal::logger('lbw_donation')->notice($log_msg);
         }
 
-        if ($this->processCharge($form_state)) {
+        $stripe_token = $form_state->getValue('stripeToken');
+        $donation_amount = $form_state->getValue('donation_amount') * 100;
+
+        if ($this->stripe_charge->create($donation_amount, $stripe_token)) {
             drupal_set_message($this->t('Thank you for your donation of $@amount', ['@amount' => $form_state->getValue('donation_amount')]));
+            $form_state->setRedirect('lbw_donation.donate_form_complete');
         } else {
-            $error_msg = $this->getChargeError();
+            $error_msg = $this->stripe_charge->getErrorMessage();
             drupal_set_message($this->t('There was an error processing your donation. Please contact us. <br> [@error]', ['@error' => $error_msg]), 'error');
         }
 
@@ -152,26 +157,6 @@ class DonationForm extends FormBase
         ];
 
         return $variables;
-    }
-
-    /**
-     * @param FormStateInterface $form_state
-     * @return bool
-     */
-    private function processCharge(FormStateInterface $form_state)
-    {
-        $stripe_token = $form_state->getValue('stripeToken');
-        $donation_amount = $form_state->getValue('donation_amount') * 100;
-
-        return $this->stripe_charge->create($donation_amount, $stripe_token);
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getChargeError()
-    {
-        return $this->stripe_charge->getErrorMessage();
     }
 
 }

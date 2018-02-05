@@ -68,7 +68,7 @@ class StripeCharge
         }
 
         // @todo Address above conditions instead of just a generic error message
-        $this->error_message = $error_msg ?: 'A configuration or connection issue prevented processing the transaction.';
+        $this->error_message = @$error_msg ?: 'A configuration or connection issue prevented processing the transaction.';
 
         return false;
     }

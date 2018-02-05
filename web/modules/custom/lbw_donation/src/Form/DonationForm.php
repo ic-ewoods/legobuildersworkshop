@@ -33,7 +33,6 @@ class DonationForm extends FormBase {
         $form['donation_amount'] = [
             '#type' => 'number',
             '#title' => 'Amount',
-            '#value' => '1000',
         ];
 
         $form['stripe_checkout'] = [
@@ -117,7 +116,6 @@ class DonationForm extends FormBase {
             'stripe_key' => $this->getStripeKey('public'),
             'site_name' => \Drupal::config('system.site')->get('name'),
             'description' => 'Donation',
-            'amount' => '1000',
         ];
 
         return $variables;
@@ -144,7 +142,7 @@ class DonationForm extends FormBase {
         \Stripe\Stripe::setApiKey($this->getStripeKey('secret'));
 
         $stripe_token = $form_state->getValue('stripeToken');
-        $donation_amount = $form_state->getValue('donation_amount');
+        $donation_amount = $form_state->getValue('donation_amount') * 100;
 
         $charge = \Stripe\Charge::create([
             'amount' => $donation_amount,

@@ -1,14 +1,13 @@
 <script
     src="https://checkout.stripe.com/checkout.js" class="stripe-button"
     data-key="{{ stripe_key }}"
-    data-amount="{{ donation_amount }}"
     data-name="{{ site_name }}"
     data-description="{{ description }}"
     data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
     data-locale="auto"
-    {#data-billing-address="true"#}
-    {#data-zip-code="true"#}
-    data-panel-label="Donate {% verbatim %}{{amount}}{% endverbatim %}"
+    data-billing-address="true"
+    data-zip-code="true"
+    data-panel-label="Donate"
     data-label="Donate Now!"
 >
 </script>

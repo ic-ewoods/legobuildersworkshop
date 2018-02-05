@@ -80,3 +80,9 @@ lando behat
 
 And it is a great way to confirm that the module is installed successfully, that template files are getting loaded, and the site is functioning in general. So, if those all pass, you're good to go!
 
+
+## Review
+
+Most of what you want to see is in [/web/modules/custom/lbw_donation](https://github.com/woodseowl/legobuildersworkshop/tree/master/web/modules/custom/lbw_donation) as well as the main composer.json.
+
+The donation form is reachable at http://lbw-donate.lndo.site/donate if you are using Lando.

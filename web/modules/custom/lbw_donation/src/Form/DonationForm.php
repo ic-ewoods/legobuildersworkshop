@@ -52,6 +52,8 @@ class DonationForm extends FormBase
             '#type' => 'number',
             '#title' => $this->t('Amount'),
             '#default_value' => 10,
+            '#min' => 0.5, // Stripe minimum
+            '#max' => 10000, // Seems like this would deserve a conversation
             '#step' => 'any'
         ];
 
